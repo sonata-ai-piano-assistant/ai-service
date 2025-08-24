@@ -9,6 +9,8 @@ const {
   metricsMiddleware,
   metricsRouter
 } = require("./utils/metrics")
+const loggerMiddleware = require("./middlewares/logger.middleware")
+const errorHandlingMiddleware = require("./middlewares/errorHandling")
 app.use(express.json())
 app.use(
   cors({
@@ -22,10 +24,11 @@ initializeMetrics("ai")
 
 // 📊 MIDDLEWARE MÉTRIQUES
 app.use(metricsMiddleware)
-
+app.use(loggerMiddleware)
 // 🛣️ ROUTES MÉTRIQUES
 app.use(metricsRouter)
 // Routes
 app.use("/api", apiRoutes)
+app.use(errorHandlingMiddleware)
 // Lancer le serveur
 app.listen(PORT, () => console.log(`🎵 Server running on port ${PORT}`))

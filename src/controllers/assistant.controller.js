@@ -30,6 +30,7 @@ exports.getThreadById = async (req, res) => {
 exports.addMessageToThread = async (req, res) => {
   const { threadId } = req.params
   const { message, userId, sessionId } = req.body
+  console.log({ message, userId, sessionId, threadId })
 
   try {
     // Vérifier si un run est déjà actif
@@ -67,12 +68,12 @@ exports.addMessageToThread = async (req, res) => {
       ) {
         const toolCalls = run.required_action.submit_tool_outputs.tool_calls
         const toolOutputs = []
-
         // Import database tools
 
         for (const toolCall of toolCalls) {
           const functionName = toolCall.function.name
           const args = JSON.parse(toolCall.function.arguments)
+          console.log(`Executing tool: ${functionName} with args:`, args)
 
           let result
           if (databaseTools[functionName]) {
