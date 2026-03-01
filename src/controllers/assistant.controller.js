@@ -45,7 +45,7 @@ exports.addMessageToThread = async (req, res) => {
     // Ajouter le message utilisateur
     await openai.beta.threads.messages.create(threadId, {
       role: "user",
-      content: message,
+      content: `[context: userId=${userId}, sessionId=${sessionId}]\n\n${message}`,
       metadata: { userId, sessionId }
     })
 
@@ -73,6 +73,11 @@ exports.addMessageToThread = async (req, res) => {
         for (const toolCall of toolCalls) {
           const functionName = toolCall.function.name
           const args = JSON.parse(toolCall.function.arguments)
+
+          // Override userId/sessionId with real values from the request
+          if ('userId' in args) args.userId = userId
+          if ('sessionId' in args) args.sessionId = sessionId
+
           console.log(`Executing tool: ${functionName} with args:`, args)
 
           let result

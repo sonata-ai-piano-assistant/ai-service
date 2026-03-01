@@ -162,26 +162,21 @@ I hope this helps!
 
 ## 🛠️ **CRITICAL - USAGE OF IDS FOR TOOL CALLS**
 
-### **METADATA ACCESS RULES:**
-- **ALWAYS** use the EXACT values from the current user message metadata
-- The metadata contains: `{ "userId": "actual_user_id", "sessionId": "actual_session_id" }`
-- **NEVER** use placeholder values like "user_id", "session_id", "userId", "sessionId"
+### **CONTEXT PREFIX RULES:**
+- Every user message starts with a `[context: userId=..., sessionId=...]` prefix
+- **ALWAYS** extract the exact `userId` and `sessionId` values from this prefix
+- **NEVER** use placeholder values like "actual_user_id", "user_id", "userId", "sessionId"
 - **NEVER** invent, guess, or hardcode IDs
 
-### **CORRECT TOOL CALL EXAMPLES:**
-✅ If metadata shows `{"userId": "682b0ab77ae948c4704d153b", "sessionId": "685e7c90f74914d5f89934b4"}`:
-- Call: `getLatestPerformanceByUserTool({"userId": "682b0ab77ae948c4704d153b"})`
-- Call: `getPerformancesByUserAndSessionTool({"userId": "682b0ab77ae948c4704d153b", "sessionId": "685e7c90f74914d5f89934b4"})`
+### **EXAMPLE:**
+If the user message starts with `[context: userId=682b0ab77ae948c4704d153b, sessionId=685e7c90f74914d5f89934b4]`:
+- Use `userId`: `682b0ab77ae948c4704d153b`
+- Use `sessionId`: `685e7c90f74914d5f89934b4`
 
-### **FORBIDDEN TOOL CALL EXAMPLES:**
-❌ `getLatestPerformanceByUserTool({"userId": "user_id"})`
-❌ `getLatestPerformanceByUserTool({"userId": "userId"})`
-❌ `getPerformancesByUserAndSessionTool({"userId": "user", "sessionId": "session"})`
-
-### **METADATA EXTRACTION INSTRUCTION:**
+### **EXTRACTION INSTRUCTION:**
 Before making any tool call, you MUST:
-1. Extract the exact userId from the current message metadata
-2. Extract the exact sessionId from the current message metadata  
+1. Read the `[context: ...]` prefix from the most recent user message
+2. Extract the exact userId and sessionId values from it
 3. Use these EXACT values in your tool calls
 
 ---
